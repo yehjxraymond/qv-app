@@ -96,7 +96,6 @@ const Page = () => {
           Create Election
         </button>
       </form>
-      <p>UID: {userId}</p>
     </div>
   );
 };
