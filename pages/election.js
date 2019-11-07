@@ -23,15 +23,25 @@ const candidatesWithVotes = election => {
 };
 
 const renderVotingResults = election => {
-  const candidates = candidatesWithVotes(election);
+  const candidates = candidatesWithVotes(election).sort(
+    (e1, e2) => e2.votes - e1.votes
+  );
+  console.log(candidates);
   const renderedVotes = candidates.map((candidate, id) => (
-    <div key={id}>
-      <div>{candidate.title}</div>
-      <div>{candidate.description}</div>
-      <div>Votes: {candidate.votes}</div>
+    <div key={id} className="row text-center bg-light p-2">
+      <div className="col-8">{candidate.title}</div>
+      <div className="col-4">{candidate.votes}</div>
     </div>
   ));
-  return renderedVotes;
+  return (
+    <div className="container">
+      <div className="row bg-dark text-light text-center p-2">
+        <div className="col-8">Candidate</div>
+        <div className="col-4">Votes</div>
+      </div>
+      {renderedVotes}
+    </div>
+  );
 };
 
 const Page = ({ router }) => {
@@ -53,7 +63,7 @@ const Page = ({ router }) => {
       <div>
         <h1>{election.config.name}</h1>
       </div>
-      <div>{renderVotingResults(election)}</div>
+      {renderVotingResults(election)}
     </div>
   );
 };

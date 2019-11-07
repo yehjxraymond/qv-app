@@ -14,15 +14,19 @@ const renderVotes = (candidates, votes, addVote, subVote) => {
     vote: vote.vote
   }));
   const renderedVotes = elements.map((element, id) => (
-    <div key={id}>
-      <h4>{element.title}</h4>
-      <div>{element.description}</div>
-      <div>Votes: {element.vote}</div>
-      <div>
-        <button onClick={() => addVote(element.index, 1)}>Add Vote</button>
-        <button onClick={() => addVote(element.index, -1)}>
-          Subtract Vote
-        </button>
+    <div key={id} className="row mt-2 p-2 bg-light">
+      <div className="col-8">
+        <h4>{element.title}</h4>
+        <div>{element.description}</div>
+      </div>
+      <div className="col-4 text-center">
+        <div onClick={() => addVote(element.index, 1)}>
+          <i className="fas fa-plus fa-2x text-dark"></i>
+        </div>
+        <div className="bg-dark text-white p-2 m-2 rounded">{element.vote}</div>
+        <div onClick={() => addVote(element.index, -1)}>
+          <i className="fas fa-minus fa-2x text-dark"></i>
+        </div>
       </div>
     </div>
   ));
@@ -54,7 +58,7 @@ const Page = ({ router }) => {
   const addVote = (index, num) => {
     const newVotes = cloneDeep(votes);
     newVotes[index] = { ...newVotes[index], vote: newVotes[index].vote + num };
-    if (newVotes[index].vote < 0) return alert("Cannot have negative votes");
+    // if (newVotes[index].vote < 0) return alert("Cannot have negative votes");
     const newBudget = totalVoteBudget(newVotes);
     if (newBudget > election.config.budget) return alert("Insufficient budget");
     setVotes(newVotes);
@@ -76,18 +80,22 @@ const Page = ({ router }) => {
   };
 
   return (
-    <div className="container">
-      <div>
+    <>
+      <div className="sticky-top navbar bg-white">
         <h2>{get(election, "config.name")}</h2>
-        <div>
+        <div className="bg-dark text-white p-2 m-2 rounded">
           Budget: {get(election, "config.budget", 0) - totalVoteBudget(votes)}
         </div>
       </div>
-      <div>{renderVotes(election && election.candidates, votes, addVote)}</div>
-      <button className="btn btn-primary btn-block" onClick={onSubmitVotes}>
-        Submit Votes
-      </button>
-    </div>
+      <div className="container">
+        <div>
+          {renderVotes(election && election.candidates, votes, addVote)}
+        </div>
+        <button className="btn btn-primary btn-block" onClick={onSubmitVotes}>
+          Submit Votes
+        </button>
+      </div>
+    </>
   );
 };
 

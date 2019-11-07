@@ -21,7 +21,9 @@ const Page = ({ router }) => {
         ></img>
       </div>
       <div className="text-center m-2">
-        <h3>{url}</h3>
+        <h3>
+          <a href={url}>{url}</a>
+        </h3>
       </div>
       <div className="m-2">
         <Link href={`/election?election=${electionId}`}>
