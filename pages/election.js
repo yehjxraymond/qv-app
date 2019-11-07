@@ -26,7 +26,6 @@ const renderVotingResults = election => {
   const candidates = candidatesWithVotes(election).sort(
     (e1, e2) => e2.votes - e1.votes
   );
-  console.log(candidates);
   const renderedVotes = candidates.map((candidate, id) => (
     <div key={id} className="row text-center bg-light p-2">
       <div className="col-8">{candidate.title}</div>

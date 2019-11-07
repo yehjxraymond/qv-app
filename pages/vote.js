@@ -1,5 +1,6 @@
 import Router, { withRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { get, zipWith, sumBy, cloneDeep } from "lodash";
 import { getElection } from "../src/services/qv";
 import initialiseUserId from "../src/utils/initialiseUserId";
@@ -39,6 +40,7 @@ const Page = ({ router }) => {
   const [userId, setUserId] = useState();
   const [election, setElection] = useState();
   const [votes, setVotes] = useState();
+  const [error, setError] = useState();
   const electionId = get(router, "query.election");
 
   initialiseUserId(setUserId);
@@ -75,7 +77,9 @@ const Page = ({ router }) => {
       Router.push(`/election?election=${election.id}`);
     } catch (e) {
       const errorFromServer = get(e, "response.data.error");
-      alert(errorFromServer || e.message || e);
+      const msg = errorFromServer || e.message || e;
+      alert(msg);
+      setError(msg);
     }
   };
 
@@ -87,13 +91,19 @@ const Page = ({ router }) => {
           Budget: {get(election, "config.budget", 0) - totalVoteBudget(votes)}
         </div>
       </div>
-      <div className="container">
+      <div className="container mb-4">
         <div>
           {renderVotes(election && election.candidates, votes, addVote)}
         </div>
-        <button className="btn btn-primary btn-block" onClick={onSubmitVotes}>
+        
+        <button className="btn btn-dark btn-block mb-2" onClick={onSubmitVotes}>
           Submit Votes
         </button>
+        {error ? (
+          <Link href={`/election?election=${electionId}`}>
+            <button className="btn btn-dark btn-block mb-2">View Results</button>
+          </Link>
+        ) : null}
       </div>
     </>
   );
