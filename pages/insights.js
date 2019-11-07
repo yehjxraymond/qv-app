@@ -18,6 +18,11 @@ const renderCharts = election => {
 
   const renderedChart = chartData.map((chart, index) => {
     const count = countBy(chart.votes);
+    const sorted = Object.keys(count)
+      .map(key => [key, count[key]])
+      .sort((a, b) => a[0] - b[0]);
+    const labels = sorted.map(s => s[0]);
+    const values = sorted.map(s => s[1]);
     const option = {
       //   tooltips: { enabled: false },
       legend: {
@@ -25,8 +30,7 @@ const renderCharts = election => {
       }
     };
     const data = {
-      labels: Object.keys(count),
-
+      labels,
       datasets: [
         {
           //   backgroundColor: "rgba(255,99,132,0.2)",
@@ -34,7 +38,7 @@ const renderCharts = election => {
           //   borderWidth: 1,
           //   hoverBackgroundColor: "rgba(255,99,132,0.4)",
           //   hoverBorderColor: "rgba(255,99,132,1)",
-          data: Object.keys(count).map(key => count[key])
+          data: values
         }
       ]
     };
