@@ -49,7 +49,6 @@ const Page = ({ router }) => {
 
   const fetchElection = async id => {
     const election = await getElection(id);
-    console.log(election);
     setElection(election);
   };
 
