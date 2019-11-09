@@ -24,20 +24,23 @@ const renderCharts = election => {
     const labels = sorted.map(s => s[0]);
     const values = sorted.map(s => s[1]);
     const option = {
-      //   tooltips: { enabled: false },
       legend: {
         display: false
+      },
+      scales: {
+        yAxes: [
+          {
+            ticks: {
+              beginAtZero: true
+            }
+          }
+        ]
       }
     };
     const data = {
       labels,
       datasets: [
         {
-          //   backgroundColor: "rgba(255,99,132,0.2)",
-          //   borderColor: "rgba(255,99,132,1)",
-          //   borderWidth: 1,
-          //   hoverBackgroundColor: "rgba(255,99,132,0.4)",
-          //   hoverBorderColor: "rgba(255,99,132,1)",
           data: values
         }
       ]
