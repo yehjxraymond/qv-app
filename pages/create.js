@@ -65,6 +65,9 @@ const Page = () => {
 
   return (
     <div className="container">
+      <div className="mt-4 mb-4">
+        <h1>Create an election</h1>
+      </div>
       <form>
         <div className="form-group">
           <label>Election Name</label>
@@ -89,10 +92,7 @@ const Page = () => {
             onChange={e => setBudget(e.target.value)}
           />
         </div>
-        <button
-          className="btn btn-primary btn-block"
-          onClick={onCreateElection}
-        >
+        <button className="btn btn-dark btn-block" onClick={onCreateElection}>
           Create Election
         </button>
       </form>
