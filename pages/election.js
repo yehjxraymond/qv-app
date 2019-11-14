@@ -2,6 +2,7 @@ import { withRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { get } from "lodash";
 import { getElection } from "../src/services/qv";
+import Link from "next/link";
 
 const reduceVotes = votersVotes => {
   const score = {};
@@ -46,14 +47,20 @@ const renderVotingResults = election => {
 const Page = ({ router }) => {
   const [election, setElection] = useState();
   const electionId = get(router, "query.election");
+  const userId = get(router, "query.userId", "");
+  const isPrivateElection = get(election, "config.private");
 
-  const fetchElection = async id => {
-    const election = await getElection(id);
-    setElection(election);
+  const fetchElection = async (id, uid) => {
+    try {
+      const election = await getElection(id, uid);
+      setElection(election);
+    } catch (e) {
+      alert(e.message);
+    }
   };
 
   useEffect(() => {
-    if (!election && electionId) fetchElection(electionId);
+    if (!election && electionId) fetchElection(electionId, userId);
   }, [electionId]);
 
   if (!election) return null;
@@ -63,6 +70,26 @@ const Page = ({ router }) => {
         <h1>{election.config.name}</h1>
       </div>
       {renderVotingResults(election)}
+      <div className="mt-2 mb-2">
+        <Link
+          href={`/insights?election=${electionId}${
+            userId ? `&userId=${userId}` : ""
+          }`}
+        >
+          <button className="btn btn-dark btn-block mb-2">View Insights</button>
+        </Link>
+      </div>
+      {isPrivateElection ? (
+        <div className="mt-2 mb-2">
+          <Link
+            href={`/share-private?election=${electionId}${
+              userId ? `&userId=${userId}` : ""
+            }`}
+          >
+            <button className="btn btn-dark btn-block mb-2">Voter Links</button>
+          </Link>
+        </div>
+      ) : null}
     </div>
   );
 };

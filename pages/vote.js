@@ -42,25 +42,32 @@ const Page = ({ router }) => {
   const [votes, setVotes] = useState();
   const [error, setError] = useState();
   const electionId = get(router, "query.election");
+  const userIdOverwrite = get(router, "query.userId");
 
   initialiseUserId(setUserId);
 
-  const fetchElection = async id => {
-    const election = await getElection(id);
-    setElection(election);
-    setVotes(
-      election.candidates.map((_candidate, id) => ({ candidate: id, vote: 0 }))
-    );
+  const fetchElection = async (id, uid) => {
+    try {
+      const election = await getElection(id, uid);
+      setElection(election);
+      setVotes(
+        election.candidates.map((_candidate, id) => ({
+          candidate: id,
+          vote: 0
+        }))
+      );
+    } catch (e) {
+      alert(e.message);
+    }
   };
 
   useEffect(() => {
-    if (!election && electionId) fetchElection(electionId);
+    if (!election && electionId) fetchElection(electionId, userIdOverwrite);
   }, [electionId]);
 
   const addVote = (index, num) => {
     const newVotes = cloneDeep(votes);
     newVotes[index] = { ...newVotes[index], vote: newVotes[index].vote + num };
-    // if (newVotes[index].vote < 0) return alert("Cannot have negative votes");
     const newBudget = totalVoteBudget(newVotes);
     if (newBudget > election.config.budget) return alert("Insufficient budget");
     setVotes(newVotes);
@@ -69,7 +76,7 @@ const Page = ({ router }) => {
   const onSubmitVotes = async () => {
     try {
       const vote = {
-        voter: userId,
+        voter: userIdOverwrite || userId,
         election: election.id,
         votes
       };
@@ -95,13 +102,15 @@ const Page = ({ router }) => {
         <div>
           {renderVotes(election && election.candidates, votes, addVote)}
         </div>
-        
+
         <button className="btn btn-dark btn-block mb-2" onClick={onSubmitVotes}>
           Submit Votes
         </button>
         {error ? (
           <Link href={`/election?election=${electionId}`}>
-            <button className="btn btn-dark btn-block mb-2">View Results</button>
+            <button className="btn btn-dark btn-block mb-2">
+              View Results
+            </button>
           </Link>
         ) : null}
       </div>

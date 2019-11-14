@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { get, countBy } from "lodash";
 import { Bar } from "react-chartjs-2";
 import { getElection } from "../src/services/qv";
+import Link from "next/link";
 
 const renderCharts = election => {
   if (!election || !election.candidates) return null;
@@ -59,14 +60,19 @@ const renderCharts = election => {
 const Page = ({ router }) => {
   const [election, setElection] = useState();
   const electionId = get(router, "query.election");
+  const userId = get(router, "query.userId", "");
 
-  const fetchElection = async id => {
-    const election = await getElection(id);
-    setElection(election);
+  const fetchElection = async (id, uid) => {
+    try {
+      const election = await getElection(id, uid);
+      setElection(election);
+    } catch (e) {
+      alert(e.message);
+    }
   };
 
   useEffect(() => {
-    if (!election && electionId) fetchElection(electionId);
+    if (!election && electionId) fetchElection(electionId, userId);
   }, [electionId]);
 
   if (!election) return null;
@@ -76,6 +82,15 @@ const Page = ({ router }) => {
         <h1>{election.config.name}</h1>
       </div>
       {renderCharts(election)}
+      <div className="mt-4 mb-4">
+        <Link
+          href={`/election?election=${electionId}${
+            userId ? `&userId=${userId}` : ""
+          }`}
+        >
+          <button className="btn btn-dark btn-block mb-2">View Overall Results</button>
+        </Link>
+      </div>
     </div>
   );
 };
