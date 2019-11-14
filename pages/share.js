@@ -2,6 +2,7 @@ import Link from "next/link";
 import { withRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { get } from "lodash";
+import QRCode from "qrcode.react";
 
 const Page = ({ router }) => {
   const [origin, setOrigin] = useState();
@@ -15,19 +16,24 @@ const Page = ({ router }) => {
 
   return (
     <div className="container">
-      <div className="text-center">
-        <img
-          src={`https://api.qrserver.com/v1/create-qr-code/?data=${url}`}
-        ></img>
+      <div>
+        <h1>Share Your Voting Link</h1>
       </div>
-      <div className="text-center m-2">
-        <h3>
-          <a href={url}>{url}</a>
-        </h3>
+      <div className="bg-light p-4">
+        <div className="text-center">
+          <QRCode value={url} size={200} />
+        </div>
+        <div className="text-center mt-4">
+          <h3>
+            <a href={url} className="text-dark">
+              {url}
+            </a>
+          </h3>
+        </div>
       </div>
-      <div className="m-2">
+      <div className="mt-2">
         <Link href={`/election?election=${electionId}`}>
-          <button className="btn btn-primary btn-block">View Results</button>
+          <button className="btn btn-dark btn-block">View Results</button>
         </Link>
       </div>
     </div>
