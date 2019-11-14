@@ -131,24 +131,28 @@ const Page = () => {
   };
 
   const onCreateElection = async e => {
-    e.preventDefault();
-    const election = {
-      owner: userId,
-      config: { name: electionName, budget: Number(budget) },
-      candidates
-    };
-    if (privateElection) {
-      election.config = {
-        ...election.config,
-        private: privateElection,
-        invite: voters
+    try {
+      e.preventDefault();
+      const election = {
+        owner: userId,
+        config: { name: electionName, budget: Number(budget) },
+        candidates
       };
-    }
-    const { id } = await createElection(election);
-    if (!privateElection) {
-      Router.push(`/share?election=${id}`);
-    } else {
-      Router.push(`/share-private?election=${id}&userId=${userId}`);
+      if (privateElection) {
+        election.config = {
+          ...election.config,
+          private: privateElection,
+          invite: voters
+        };
+      }
+      const { id } = await createElection(election);
+      if (!privateElection) {
+        Router.push(`/share?election=${id}`);
+      } else {
+        Router.push(`/share-private?election=${id}&userId=${userId}`);
+      }
+    } catch (e) {
+      alert(e.message);
     }
   };
 
