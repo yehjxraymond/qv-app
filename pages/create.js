@@ -7,7 +7,7 @@ import Router from "next/router";
 const renderCandidates = (candidates, onUpdateCandidate) => {
   const renderedCandidates = candidates.map((candidate, id) => (
     <div key={id} className="p-2 mb-2 bg-light">
-      <div>Title:</div>
+      <div>Title*:</div>
       <input
         className="form-control"
         placeholder="Enter title"
@@ -32,14 +32,14 @@ const renderCandidates = (candidates, onUpdateCandidate) => {
 const renderVoters = (voters, onUpdateVoter) => {
   const renderedVoters = voters.map((voter, id) => (
     <div key={id} className="p-2 mb-2 bg-white">
-      <div>Name:</div>
+      <div>Name*:</div>
       <input
         className="form-control"
         placeholder="Enter Name"
         value={voter.name}
         onChange={e => onUpdateVoter(id, { ...voter, name: e.target.value })}
       />
-      <div>Email:</div>
+      <div>Email*:</div>
       <input
         type="email"
         className="form-control"
@@ -66,7 +66,7 @@ const Options = ({
   return (
     <div className="bg-light p-2">
       <div className="form-group">
-        <label>Voter's Budget</label>
+        <label>Voter's Budget*:</label>
         <input
           className="form-control"
           placeholder="Enter Budget"
@@ -175,7 +175,7 @@ const Page = () => {
       </div>
       <form>
         <div className="form-group">
-          <label>Election Name</label>
+          <label>Election Name*:</label>
           <div className="d-flex align-items-center">
             <input
               className="form-control d-inline-block"
