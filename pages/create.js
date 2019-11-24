@@ -60,7 +60,9 @@ const Options = ({
   setPrivateElection,
   voters,
   onUpdateVoter,
-  onAddVoter
+  onAddVoter,
+  notifyInvites,
+  setNotifyInvites
 }) => {
   if (!showOptions) return null;
   return (
@@ -80,16 +82,33 @@ const Options = ({
           <input
             type="checkbox"
             className="custom-control-input"
-            id="customSwitches"
+            id="privateSwitch"
             checked={privateElection}
             onChange={() => setPrivateElection(!privateElection)}
             readOnly
           />
-          <label className="custom-control-label" htmlFor="customSwitches">
+          <label className="custom-control-label" htmlFor="privateSwitch">
             {privateElection ? "Private" : "Public"} Election
           </label>
         </div>
       </div>
+      {privateElection ? (
+        <div className="form-group">
+          <div className="custom-switch">
+            <input
+              type="checkbox"
+              className="custom-control-input"
+              id="notifySwitch"
+              checked={notifyInvites}
+              onChange={() => setNotifyInvites(!notifyInvites)}
+              readOnly
+            />
+            <label className="custom-control-label" htmlFor="notifySwitch">
+              {notifyInvites ? "Notify" : "Do Not Notify"} Invited Voters
+            </label>
+          </div>
+        </div>
+      ) : null}
       {privateElection ? (
         <div>
           <label>Invited Voters:</label>
@@ -107,6 +126,7 @@ const Page = () => {
   const [userId, setUserId] = useState();
   const [showOptions, setShowOptions] = useState(false);
   const [privateElection, setPrivateElection] = useState(false);
+  const [notifyInvites, setNotifyInvites] = useState(false);
   const [electionName, setElectionName] = useState("");
   const [candidates, setCandidates] = useState([
     { title: "", description: "" },
@@ -142,6 +162,7 @@ const Page = () => {
         election.config = {
           ...election.config,
           private: privateElection,
+          notifyInvites,
           invite: voters
         };
       }
@@ -184,7 +205,7 @@ const Page = () => {
               onChange={e => setElectionName(e.target.value)}
             />
             <div className="p-2" onClick={() => setShowOptions(!showOptions)}>
-              <i class="fas fa-sliders-h d-inline-block"></i>
+              <i className="fas fa-sliders-h d-inline-block"></i>
             </div>
           </div>
         </div>
@@ -197,6 +218,8 @@ const Page = () => {
           voters={voters}
           onUpdateVoter={onUpdateVoter}
           onAddVoter={onAddVoter}
+          notifyInvites={notifyInvites}
+          setNotifyInvites={setNotifyInvites}
         />
         <label>Candidates:</label>
         {renderCandidates(candidates, onUpdateCandidate)}
