@@ -1,10 +1,13 @@
 import Router, { withRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { get, zipWith, sumBy, cloneDeep } from "lodash";
+import { get, zipWith, sumBy, cloneDeep, orderBy } from "lodash";
 import { getElection } from "../src/services/qv";
 import initialiseUserId from "../src/utils/initialiseUserId";
 import { submitVotes } from "../src/services/qv";
+import FlipMove from 'react-flip-move';
+
+const CARD_SORT_ANIMATION_DELAY_MILLISECONDS = 1800
 
 const renderVotes = (candidates, votes, addVote, subVote) => {
   if (!candidates || !votes) return;
@@ -14,8 +17,9 @@ const renderVotes = (candidates, votes, addVote, subVote) => {
     description: candidate.description,
     vote: vote.vote
   }));
-  const renderedVotes = elements.map((element, id) => (
-    <div key={id} className="row mt-2 p-2 bg-light">
+  const sortedElements = orderBy(elements, 'vote', 'desc')
+  const renderedVotes = sortedElements.map((element, id) => (
+    <div key={element.title} className="row mt-2 p-2 bg-light">
       <div className="col-8">
         <h4>{element.title}</h4>
         <div>{element.description}</div>
@@ -31,7 +35,7 @@ const renderVotes = (candidates, votes, addVote, subVote) => {
       </div>
     </div>
   ));
-  return <>{renderedVotes}</>;
+  return <FlipMove delay={CARD_SORT_ANIMATION_DELAY_MILLISECONDS} typeName={null}>{renderedVotes}</FlipMove>;
 };
 
 const totalVoteBudget = votes => sumBy(votes, vote => Math.pow(vote.vote, 2));
