@@ -204,7 +204,7 @@ const Options = ({
               style={{ fontSize: "1.5em" }}
             >
               {csvVoter ? (
-                <i class="fas fa-file-alt"></i>
+                <i className="fas fa-file-alt"></i>
               ) : (
                 <i className="fas fa-file-csv"></i>
               )}

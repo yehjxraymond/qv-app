@@ -35,6 +35,11 @@ const renderVotingResults = election => {
   ));
   return (
     <div className="container">
+      <div className="row mb-2" style={{ flexDirection: "row-reverse" }}>
+        <div className="bg-dark text-light p-2" style={{ borderRadius: 5 }}>
+          No. Voters: {election.votes.length}
+        </div>
+      </div>
       <div className="row bg-dark text-light text-center p-2">
         <div className="col-8">Candidate</div>
         <div className="col-4">Votes</div>
