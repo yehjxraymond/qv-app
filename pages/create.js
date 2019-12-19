@@ -5,6 +5,10 @@ import initialiseUserId from "../src/utils/initialiseUserId";
 import { createElection } from "../src/services/qv";
 import { useDropzone } from "react-dropzone";
 import Router from "next/router";
+import {
+  randomPrivateKey,
+  publicKeyFromPrivateKey
+} from "../src/utils/encryption";
 
 const renderCandidates = (candidates, onUpdateCandidate) => {
   const renderedCandidates = candidates.map((candidate, id) => (
@@ -138,6 +142,8 @@ const Options = ({
   showOptions,
   privateElection,
   setPrivateElection,
+  encryptedVotes,
+  setEncryptedVotes,
   voters,
   onUpdateVoter,
   setVoters,
@@ -175,6 +181,23 @@ const Options = ({
           </label>
         </div>
       </div>
+      {privateElection ? (
+        <div className="form-group">
+          <div className="custom-switch">
+            <input
+              type="checkbox"
+              className="custom-control-input"
+              id="notifySwitch"
+              checked={encryptedVotes}
+              onChange={() => setEncryptedVotes(!encryptedVotes)}
+              readOnly
+            />
+            <label className="custom-control-label" htmlFor="notifySwitch">
+              {encryptedVotes ? "Encrypted" : "Unencrypted"} Votes
+            </label>
+          </div>
+        </div>
+      ) : null}
       {privateElection ? (
         <div className="form-group">
           <div className="custom-switch">
@@ -233,6 +256,7 @@ const Page = () => {
   const [userId, setUserId] = useState();
   const [showOptions, setShowOptions] = useState(false);
   const [privateElection, setPrivateElection] = useState(false);
+  const [encryptedVotes, setEncryptedVotes] = useState(false);
   const [csvCandidate, setCsvCandidate] = useState(false);
   const [notifyInvites, setNotifyInvites] = useState(false);
   const [electionName, setElectionName] = useState("");
@@ -275,11 +299,27 @@ const Page = () => {
           invite: voters
         };
       }
+
+      let privateKey;
+      if (encryptedVotes) {
+        privateKey = randomPrivateKey();
+        const publicKey = publicKeyFromPrivateKey(privateKey);
+        election.config.encryptionKey = publicKey;
+      }
+
       const { id } = await createElection(election);
-      if (!privateElection) {
-        Router.push(`/share?election=${id}`);
-      } else {
-        Router.push(`/share-private?election=${id}&userId=${userId}`);
+
+      switch (true) {
+        case privateElection && encryptedVotes:
+          Router.push(
+            `/share-private?election=${id}&userId=${userId}&privateKey=${privateKey}`
+          );
+          break;
+        case privateElection && !encryptedVotes:
+          Router.push(`/share-private?election=${id}&userId=${userId}`);
+          break;
+        default:
+          Router.push(`/share?election=${id}`);
       }
     } catch (e) {
       alert(e.message);
@@ -330,6 +370,8 @@ const Page = () => {
           setVoters={setVoters}
           notifyInvites={notifyInvites}
           setNotifyInvites={setNotifyInvites}
+          encryptedVotes={encryptedVotes}
+          setEncryptedVotes={setEncryptedVotes}
         />
         <div className="d-flex align-items-center justify-content-between">
           <div className="m-0">

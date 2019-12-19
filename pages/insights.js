@@ -4,6 +4,7 @@ import { get, countBy } from "lodash";
 import { Bar } from "react-chartjs-2";
 import { getElection } from "../src/services/qv";
 import Link from "next/link";
+import { decryptElectionResults } from "../src/utils/electionDecrypt";
 
 const renderCharts = election => {
   if (!election || !election.candidates) return null;
@@ -61,11 +62,20 @@ const Page = ({ router }) => {
   const [election, setElection] = useState();
   const electionId = get(router, "query.election");
   const userId = get(router, "query.userId", "");
+  const privateKey = get(router, "query.privateKey");
 
   const fetchElection = async (id, uid) => {
     try {
       const election = await getElection(id, uid);
-      setElection(election);
+      if (privateKey) {
+        const decryptedElection = await decryptElectionResults(
+          election,
+          privateKey
+        );
+        setElection(decryptedElection);
+      } else {
+        setElection(election);
+      }
     } catch (e) {
       alert(e.message);
     }
@@ -86,9 +96,11 @@ const Page = ({ router }) => {
         <Link
           href={`/election?election=${electionId}${
             userId ? `&userId=${userId}` : ""
-          }`}
+          }${privateKey ? `&privateKey=${privateKey}` : ""}`}
         >
-          <button className="btn btn-dark btn-block mb-2">View Overall Results</button>
+          <button className="btn btn-dark btn-block mb-2">
+            View Overall Results
+          </button>
         </Link>
       </div>
     </div>

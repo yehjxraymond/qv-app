@@ -5,6 +5,7 @@ import { get, zipWith, sumBy, cloneDeep } from "lodash";
 import { getElection } from "../src/services/qv";
 import initialiseUserId from "../src/utils/initialiseUserId";
 import { submitVotes } from "../src/services/qv";
+import { encryptStringWithPublicKey } from "../src/utils/encryption";
 
 const renderVotes = (candidates, votes, addVote, subVote) => {
   if (!candidates || !votes) return;
@@ -77,9 +78,17 @@ const Page = ({ router }) => {
     try {
       const vote = {
         voter: userIdOverwrite || userId,
-        election: election.id,
-        votes
+        election: election.id
       };
+      if (election.config.encryptionKey) {
+        const encryptedVote = await encryptStringWithPublicKey(
+          JSON.stringify(votes),
+          election.config.encryptionKey
+        );
+        vote.encryptedVote = encryptedVote;
+      } else {
+        vote.votes = votes;
+      }
       await submitVotes(vote);
       Router.push(`/election?election=${election.id}`);
     } catch (e) {
