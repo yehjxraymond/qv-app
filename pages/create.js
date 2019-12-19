@@ -187,13 +187,13 @@ const Options = ({
             <input
               type="checkbox"
               className="custom-control-input"
-              id="notifySwitch"
+              id="encryptionSwitch"
               checked={encryptedVotes}
               onChange={() => setEncryptedVotes(!encryptedVotes)}
               readOnly
             />
-            <label className="custom-control-label" htmlFor="notifySwitch">
-              {encryptedVotes ? "Encrypted" : "Unencrypted"} Votes
+            <label className="custom-control-label" htmlFor="encryptionSwitch">
+              {encryptedVotes ? "E2E Encrypted" : "Unencrypted"} Votes
             </label>
           </div>
         </div>
