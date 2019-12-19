@@ -6,7 +6,7 @@ import Link from "next/link";
 import QRCode from "qrcode.react";
 
 const VoterList = ({ voters, origin, electionId }) => {
-  if(!voters) return null;
+  if (!voters) return null;
   const renderedVoters = voters.map((voter, index) => {
     const url = `${origin}/vote?election=${electionId}&userId=${voter.voterId}`;
     return (
@@ -20,7 +20,9 @@ const VoterList = ({ voters, origin, electionId }) => {
         >
           <h2>{voter.name}</h2>
           <div>
-            <a href={url} className="text-dark">{url}</a>
+            <a href={url} className="text-dark">
+              {url}
+            </a>
           </div>
         </div>
         <div className="text-center mb-md-0 mb-4">
@@ -37,6 +39,7 @@ const Page = ({ router }) => {
   const [election, setElection] = useState();
   const electionId = get(router, "query.election");
   const userId = get(router, "query.userId", "");
+  const privateKey = get(router, "query.privateKey");
 
   const fetchElection = async (id, uid) => {
     try {
@@ -70,7 +73,7 @@ const Page = ({ router }) => {
         <Link
           href={`/election?election=${electionId}${
             userId ? `&userId=${userId}` : ""
-          }`}
+          }${privateKey ? `&privateKey=${privateKey}` : ""}`}
         >
           <button className="btn btn-dark btn-block mb-2">View Results</button>
         </Link>

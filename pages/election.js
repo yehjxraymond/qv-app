@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { get } from "lodash";
 import { getElection } from "../src/services/qv";
 import Link from "next/link";
+import { decryptElectionResults } from "../src/utils/electionDecrypt";
 
 const reduceVotes = votersVotes => {
   const score = {};
@@ -54,11 +55,20 @@ const Page = ({ router }) => {
   const electionId = get(router, "query.election");
   const userId = get(router, "query.userId", "");
   const isPrivateElection = get(election, "config.private");
+  const privateKey = get(router, "query.privateKey");
 
   const fetchElection = async (id, uid) => {
     try {
       const election = await getElection(id, uid);
-      setElection(election);
+      if (privateKey) {
+        const decryptedElection = await decryptElectionResults(
+          election,
+          privateKey
+        );
+        setElection(decryptedElection);
+      } else {
+        setElection(election);
+      }
     } catch (e) {
       alert(e.message);
     }
@@ -79,7 +89,7 @@ const Page = ({ router }) => {
         <Link
           href={`/insights?election=${electionId}${
             userId ? `&userId=${userId}` : ""
-          }`}
+          }${privateKey ? `&privateKey=${privateKey}` : ""}`}
         >
           <button className="btn btn-dark btn-block mb-2">View Insights</button>
         </Link>
@@ -89,7 +99,7 @@ const Page = ({ router }) => {
           <Link
             href={`/share-private?election=${electionId}${
               userId ? `&userId=${userId}` : ""
-            }`}
+            }${privateKey ? `&privateKey=${privateKey}` : ""}`}
           >
             <button className="btn btn-dark btn-block mb-2">Voter Links</button>
           </Link>
