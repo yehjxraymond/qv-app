@@ -2,18 +2,18 @@ import { withRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { get, countBy } from "lodash";
 import { Bar } from "react-chartjs-2";
-import { getElection } from "../src/services/qv";
 import Link from "next/link";
+import { getElection } from "../src/services/qv";
 import { decryptElectionResults } from "../src/utils/electionDecrypt";
 
-const renderCharts = election => {
+const renderCharts = (election) => {
   if (!election || !election.candidates) return null;
-  const chartData = election.candidates.map(candidate => ({
+  const chartData = election.candidates.map((candidate) => ({
     title: candidate.title,
-    votes: []
+    votes: [],
   }));
-  election.votes.forEach(vote => {
-    vote.votes.forEach(v => {
+  election.votes.forEach((vote) => {
+    vote.votes.forEach((v) => {
       chartData[v.candidate].votes.push(v.vote);
     });
   });
@@ -21,31 +21,31 @@ const renderCharts = election => {
   const renderedChart = chartData.map((chart, index) => {
     const count = countBy(chart.votes);
     const sorted = Object.keys(count)
-      .map(key => [key, count[key]])
+      .map((key) => [key, count[key]])
       .sort((a, b) => a[0] - b[0]);
-    const labels = sorted.map(s => s[0]);
-    const values = sorted.map(s => s[1]);
+    const labels = sorted.map((s) => s[0]);
+    const values = sorted.map((s) => s[1]);
     const option = {
       legend: {
-        display: false
+        display: false,
       },
       scales: {
         yAxes: [
           {
             ticks: {
-              beginAtZero: true
-            }
-          }
-        ]
-      }
+              beginAtZero: true,
+            },
+          },
+        ],
+      },
     };
     const data = {
       labels,
       datasets: [
         {
-          data: values
-        }
-      ]
+          data: values,
+        },
+      ],
     };
     return (
       <div key={index}>

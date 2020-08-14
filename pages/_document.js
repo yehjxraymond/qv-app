@@ -13,8 +13,8 @@ class MyDocument extends Document {
           <link rel="stylesheet" href="/static/css/bootstrap.min.css" />
           <script
             src="https://kit.fontawesome.com/47c4857397.js"
-            crossorigin="anonymous"
-          ></script>
+            crossOrigin="anonymous"
+          />
         </Head>
         <body>
           <Main />

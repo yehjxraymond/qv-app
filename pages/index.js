@@ -9,7 +9,7 @@ const Page = () => (
       className="row d-flex align-items-center bg-light p-0"
       style={{ minHeight: "80vh" }}
     >
-      <div className="col-3"></div>
+      <div className="col-3" />
       <div className="col-12 col-sm-6">
         <div className="text-center p-4" style={{ fontSize: "1.5em" }}>
           Create an election for your friends, teams or organisation in seconds.
@@ -23,7 +23,7 @@ const Page = () => (
           </Link>
         </div>
       </div>
-      <div className="col-3"></div>
+      <div className="col-3" />
     </div>
   </div>
 );
