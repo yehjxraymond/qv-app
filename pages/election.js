@@ -1,14 +1,14 @@
 import { withRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { get } from "lodash";
-import { getElection } from "../src/services/qv";
 import Link from "next/link";
+import { getElection } from "../src/services/qv";
 import { decryptElectionResults } from "../src/utils/electionDecrypt";
 
-const reduceVotes = votersVotes => {
+const reduceVotes = (votersVotes) => {
   const score = {};
-  votersVotes.forEach(voter => {
-    voter.votes.forEach(vote => {
+  votersVotes.forEach((voter) => {
+    voter.votes.forEach((vote) => {
       if (!score[vote.candidate]) score[vote.candidate] = vote.vote;
       else score[vote.candidate] = score[vote.candidate] + vote.vote;
     });
@@ -16,15 +16,15 @@ const reduceVotes = votersVotes => {
   return score;
 };
 
-const candidatesWithVotes = election => {
+const candidatesWithVotes = (election) => {
   const totalVotes = reduceVotes(election.votes);
   return election.candidates.map((candidate, id) => ({
     ...candidate,
-    votes: totalVotes[id] || 0
+    votes: totalVotes[id] || 0,
   }));
 };
 
-const renderVotingResults = election => {
+const renderVotingResults = (election) => {
   const candidates = candidatesWithVotes(election).sort(
     (e1, e2) => e2.votes - e1.votes
   );

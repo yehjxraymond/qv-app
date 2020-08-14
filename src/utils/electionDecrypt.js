@@ -1,7 +1,7 @@
 import { decryptStringWithPrivateKey } from "./encryption";
 
 export const decryptElectionResults = async (election, privateKey) => {
-  const decryptedVotesDefered = election.votes.map(async vote => {
+  const decryptedVotesDefered = election.votes.map(async (vote) => {
     const decryptedVote = await decryptStringWithPrivateKey(
       vote.encryptedVote,
       privateKey

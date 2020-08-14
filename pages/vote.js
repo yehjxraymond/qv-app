@@ -2,9 +2,9 @@ import Router, { withRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { get, zipWith, sumBy, cloneDeep } from "lodash";
-import { getElection } from "../src/services/qv";
+import { getElection, submitVotes } from "../src/services/qv";
 import initialiseUserId from "../src/utils/initialiseUserId";
-import { submitVotes } from "../src/services/qv";
+
 import { encryptStringWithPublicKey } from "../src/utils/encryption";
 
 const renderVotes = (candidates, votes, addVote, subVote) => {
@@ -13,7 +13,7 @@ const renderVotes = (candidates, votes, addVote, subVote) => {
     index: vote.candidate,
     title: candidate.title,
     description: candidate.description,
-    vote: vote.vote
+    vote: vote.vote,
   }));
   const renderedVotes = elements.map((element, id) => (
     <div key={id} className="row mt-2 p-2 bg-light">
@@ -23,11 +23,11 @@ const renderVotes = (candidates, votes, addVote, subVote) => {
       </div>
       <div className="col-4 text-center">
         <div onClick={() => addVote(element.index, 1)}>
-          <i className="fas fa-plus fa-2x text-dark"></i>
+          <i className="fas fa-plus fa-2x text-dark" />
         </div>
         <div className="bg-dark text-white p-2 m-2 rounded">{element.vote}</div>
         <div onClick={() => addVote(element.index, -1)}>
-          <i className="fas fa-minus fa-2x text-dark"></i>
+          <i className="fas fa-minus fa-2x text-dark" />
         </div>
       </div>
     </div>
@@ -35,7 +35,8 @@ const renderVotes = (candidates, votes, addVote, subVote) => {
   return <>{renderedVotes}</>;
 };
 
-const totalVoteBudget = votes => sumBy(votes, vote => Math.pow(vote.vote, 2));
+const totalVoteBudget = (votes) =>
+  sumBy(votes, (vote) => Math.pow(vote.vote, 2));
 
 const Page = ({ router }) => {
   const [userId, setUserId] = useState();
@@ -54,7 +55,7 @@ const Page = ({ router }) => {
       setVotes(
         election.candidates.map((_candidate, id) => ({
           candidate: id,
-          vote: 0
+          vote: 0,
         }))
       );
     } catch (e) {
@@ -78,7 +79,7 @@ const Page = ({ router }) => {
     try {
       const vote = {
         voter: userIdOverwrite || userId,
-        election: election.id
+        election: election.id,
       };
       if (election.config.encryptionKey) {
         const encryptedVote = await encryptStringWithPublicKey(

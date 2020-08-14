@@ -1,13 +1,13 @@
 import React, { useState, useCallback } from "react";
 import { cloneDeep } from "lodash";
 import { csv } from "csvtojson";
-import initialiseUserId from "../src/utils/initialiseUserId";
-import { createElection } from "../src/services/qv";
 import { useDropzone } from "react-dropzone";
 import Router from "next/router";
+import initialiseUserId from "../src/utils/initialiseUserId";
+import { createElection } from "../src/services/qv";
 import {
   randomPrivateKey,
-  publicKeyFromPrivateKey
+  publicKeyFromPrivateKey,
 } from "../src/utils/encryption";
 
 const renderCandidates = (candidates, onUpdateCandidate) => {
@@ -18,7 +18,7 @@ const renderCandidates = (candidates, onUpdateCandidate) => {
         className="form-control"
         placeholder="Enter title"
         value={candidate.title}
-        onChange={e =>
+        onChange={(e) =>
           onUpdateCandidate(id, { ...candidate, title: e.target.value })
         }
       />
@@ -27,7 +27,7 @@ const renderCandidates = (candidates, onUpdateCandidate) => {
         className="form-control"
         placeholder="Enter description"
         value={candidate.description}
-        onChange={e =>
+        onChange={(e) =>
           onUpdateCandidate(id, { ...candidate, description: e.target.value })
         }
       />
@@ -43,7 +43,7 @@ const renderVoters = (voters, onUpdateVoter) => {
         className="form-control"
         placeholder="Enter Name"
         value={voter.name}
-        onChange={e => onUpdateVoter(id, { ...voter, name: e.target.value })}
+        onChange={(e) => onUpdateVoter(id, { ...voter, name: e.target.value })}
       />
       <div>Email*:</div>
       <input
@@ -51,7 +51,7 @@ const renderVoters = (voters, onUpdateVoter) => {
         className="form-control"
         placeholder="Enter Email"
         value={voter.email}
-        onChange={e => onUpdateVoter(id, { ...voter, email: e.target.value })}
+        onChange={(e) => onUpdateVoter(id, { ...voter, email: e.target.value })}
       />
     </div>
   ));
@@ -59,7 +59,7 @@ const renderVoters = (voters, onUpdateVoter) => {
 };
 
 const VoterDropZone = ({ setVoters, toggleCsvVoter }) => {
-  const onDrop = useCallback(acceptedFiles => {
+  const onDrop = useCallback((acceptedFiles) => {
     if (acceptedFiles && acceptedFiles[0]) {
       const reader = new FileReader();
       reader.onabort = () => console.log("file reading was aborted");
@@ -67,7 +67,7 @@ const VoterDropZone = ({ setVoters, toggleCsvVoter }) => {
       reader.onload = () => {
         csv({ delimiter: "auto" })
           .fromString(reader.result)
-          .then(result => {
+          .then((result) => {
             setVoters(result);
             if (toggleCsvVoter) toggleCsvVoter();
           });
@@ -82,7 +82,7 @@ const VoterDropZone = ({ setVoters, toggleCsvVoter }) => {
       <div {...getRootProps()}>
         <input {...getInputProps()} />
         <div className="d-flex flex-column align-items-center m-4">
-          <i className="fas fa-file-upload m-2" style={{ fontSize: "5em" }}></i>
+          <i className="fas fa-file-upload m-2" style={{ fontSize: "5em" }} />
           <div className="mt-2">Drop list of voters here</div>
           <div className="mb-2" style={{ fontSize: "0.8em" }}>
             (Sample .csv below)
@@ -90,7 +90,7 @@ const VoterDropZone = ({ setVoters, toggleCsvVoter }) => {
         </div>
       </div>
       <a href="/static/csv/voters.csv" download>
-        <i className="fas fa-file-download m-2"></i>
+        <i className="fas fa-file-download m-2" />
         Download Sample CSV Here
       </a>
     </div>
@@ -98,7 +98,7 @@ const VoterDropZone = ({ setVoters, toggleCsvVoter }) => {
 };
 
 const CandidateDropZone = ({ setCandidates, toggleCsvCandidate }) => {
-  const onDrop = useCallback(acceptedFiles => {
+  const onDrop = useCallback((acceptedFiles) => {
     if (acceptedFiles && acceptedFiles[0]) {
       const reader = new FileReader();
       reader.onabort = () => console.log("file reading was aborted");
@@ -106,7 +106,7 @@ const CandidateDropZone = ({ setCandidates, toggleCsvCandidate }) => {
       reader.onload = () => {
         csv({ delimiter: "auto" })
           .fromString(reader.result)
-          .then(result => {
+          .then((result) => {
             setCandidates(result);
             if (toggleCsvCandidate) toggleCsvCandidate();
           });
@@ -121,7 +121,7 @@ const CandidateDropZone = ({ setCandidates, toggleCsvCandidate }) => {
       <div {...getRootProps()}>
         <input {...getInputProps()} />
         <div className="d-flex flex-column align-items-center m-4">
-          <i className="fas fa-file-upload m-2" style={{ fontSize: "5em" }}></i>
+          <i className="fas fa-file-upload m-2" style={{ fontSize: "5em" }} />
           <div className="mt-2">Drop list of candidates here</div>
           <div className="mb-2" style={{ fontSize: "0.8em" }}>
             (Sample .csv below)
@@ -129,7 +129,7 @@ const CandidateDropZone = ({ setCandidates, toggleCsvCandidate }) => {
         </div>
       </div>
       <a href="/static/csv/candidates.csv" download>
-        <i className="fas fa-file-download m-2"></i>
+        <i className="fas fa-file-download m-2" />
         Download Sample CSV Here
       </a>
     </div>
@@ -149,7 +149,7 @@ const Options = ({
   setVoters,
   onAddVoter,
   notifyInvites,
-  setNotifyInvites
+  setNotifyInvites,
 }) => {
   const [csvVoter, setCsvVoter] = useState(false);
   const toggleCsvVoter = () => setCsvVoter(!csvVoter);
@@ -157,12 +157,12 @@ const Options = ({
   return (
     <div className="bg-light p-2">
       <div className="form-group">
-        <label>Voter's Budget*:</label>
+        <label>Voter&#39;s Budget*:</label>
         <input
           className="form-control"
           placeholder="Enter Budget"
           value={budget}
-          onChange={e => setBudget(e.target.value)}
+          onChange={(e) => setBudget(e.target.value)}
         />
       </div>
       <div className="form-group">
@@ -227,9 +227,9 @@ const Options = ({
               style={{ fontSize: "1.5em" }}
             >
               {csvVoter ? (
-                <i className="fas fa-file-alt"></i>
+                <i className="fas fa-file-alt" />
               ) : (
-                <i className="fas fa-file-csv"></i>
+                <i className="fas fa-file-csv" />
               )}
             </div>
           </div>
@@ -262,41 +262,41 @@ const Page = () => {
   const [electionName, setElectionName] = useState("");
   const [candidates, setCandidates] = useState([
     { title: "", description: "" },
-    { title: "", description: "" }
+    { title: "", description: "" },
   ]);
   const [voters, setVoters] = useState([
     { name: "", email: "" },
-    { name: "", email: "" }
+    { name: "", email: "" },
   ]);
   const [budget, setBudget] = useState("99");
   const toggleCsvCandidate = () => setCsvCandidate(!csvCandidate);
 
   initialiseUserId(setUserId);
 
-  const onAddCandidate = e => {
+  const onAddCandidate = (e) => {
     e.preventDefault();
     setCandidates([...candidates, { title: "", description: "" }]);
   };
 
-  const onAddVoter = e => {
+  const onAddVoter = (e) => {
     e.preventDefault();
     setVoters([...voters, { name: "", email: "" }]);
   };
 
-  const onCreateElection = async e => {
+  const onCreateElection = async (e) => {
     try {
       e.preventDefault();
       const election = {
         owner: userId,
         config: { name: electionName, budget: Number(budget) },
-        candidates
+        candidates,
       };
       if (privateElection) {
         election.config = {
           ...election.config,
           private: privateElection,
           notifyInvites,
-          invite: voters
+          invite: voters,
         };
       }
 
@@ -351,10 +351,10 @@ const Page = () => {
               className="form-control d-inline-block"
               placeholder="Enter election name"
               value={electionName}
-              onChange={e => setElectionName(e.target.value)}
+              onChange={(e) => setElectionName(e.target.value)}
             />
             <div className="p-2" onClick={() => setShowOptions(!showOptions)}>
-              <i className="fas fa-sliders-h d-inline-block"></i>
+              <i className="fas fa-sliders-h d-inline-block" />
             </div>
           </div>
         </div>
@@ -383,9 +383,9 @@ const Page = () => {
             style={{ fontSize: "1.5em" }}
           >
             {csvCandidate ? (
-              <i class="fas fa-file-alt"></i>
+              <i className="fas fa-file-alt" />
             ) : (
-              <i className="fas fa-file-csv"></i>
+              <i className="fas fa-file-csv" />
             )}
           </div>
         </div>

@@ -1,9 +1,9 @@
 import { withRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { get } from "lodash";
-import { getElection } from "../src/services/qv";
 import Link from "next/link";
 import QRCode from "qrcode.react";
+import { getElection } from "../src/services/qv";
 
 const VoterList = ({ voters, origin, electionId }) => {
   if (!voters) return null;
@@ -62,7 +62,7 @@ const Page = ({ router }) => {
   return (
     <div className="container">
       <div>
-        <h1>Private voting links for "{election.config.name}"</h1>
+        <h1>Private voting links for &#34;{election.config.name}&#34;</h1>
       </div>
       <VoterList
         voters={election.config.invite}
