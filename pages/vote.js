@@ -1,13 +1,19 @@
 import Router, { withRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { get, zipWith, sumBy, cloneDeep } from "lodash";
+import { get, zipWith, sumBy, cloneDeep, sortBy } from "lodash";
 import { getElection, submitVotes } from "../src/services/qv";
 import initialiseUserId from "../src/utils/initialiseUserId";
 
 import { encryptStringWithPublicKey } from "../src/utils/encryption";
 
-const renderVotes = (candidates, votes, addVote, subVote) => {
+const SORT_TYPES = {
+  CANDIDATE_INDEX: "index",
+  CANDIDATE_TITLE: "title",
+  CANDIDATE_VOTE: "vote",
+};
+
+const renderVotes = (candidates, votes, addVote, sortType) => {
   if (!candidates || !votes) return;
   const elements = zipWith(candidates, votes, (candidate, vote) => ({
     index: vote.candidate,
@@ -15,7 +21,8 @@ const renderVotes = (candidates, votes, addVote, subVote) => {
     description: candidate.description,
     vote: vote.vote,
   }));
-  const renderedVotes = elements.map((element, id) => (
+  const sortedElements = sortBy(elements, [sortType]);
+  const renderedVotes = sortedElements.map((element, id) => (
     <div key={id} className="row mt-2 p-2 bg-light">
       <div className="col-8">
         <h4>{element.title}</h4>
@@ -42,6 +49,7 @@ const Page = ({ router }) => {
   const [userId, setUserId] = useState();
   const [election, setElection] = useState();
   const [votes, setVotes] = useState();
+  const [sortType, setSortType] = useState(SORT_TYPES.CANDIDATE_INDEX);
   const [error, setError] = useState();
   const electionId = get(router, "query.election");
   const userIdOverwrite = get(router, "query.userId");
@@ -110,7 +118,12 @@ const Page = ({ router }) => {
       </div>
       <div className="container mb-4">
         <div>
-          {renderVotes(election && election.candidates, votes, addVote)}
+          {renderVotes(
+            election && election.candidates,
+            votes,
+            addVote,
+            sortType
+          )}
         </div>
 
         <button className="btn btn-dark btn-block mb-2" onClick={onSubmitVotes}>
