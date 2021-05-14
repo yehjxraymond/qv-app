@@ -9,11 +9,11 @@ import initialiseUserId from "../src/utils/initialiseUserId";
 import { encryptStringWithPublicKey } from "../src/utils/encryption";
 
 const SORT_TYPES = {
-  title: { label: "title", value: "title", order: "asc" },
-  vote: { label: "vote", value: "vote", order: "desc" },
+  TITLE: { label: "title", value: "title", order: "asc" },
+  VOTE: { label: "vote", value: "vote", order: "desc" },
 };
 
-const renderVotes = (candidates, votes, addVote, sortTypeValue) => {
+const renderVotes = (candidates, votes, addVote, sortType) => {
   if (!candidates || !votes) return;
   const elements = zipWith(candidates, votes, (candidate, vote) => ({
     index: vote.candidate,
@@ -21,11 +21,7 @@ const renderVotes = (candidates, votes, addVote, sortTypeValue) => {
     description: candidate.description,
     vote: vote.vote,
   }));
-  const sortedElements = orderBy(
-    elements,
-    [sortTypeValue.value],
-    [sortTypeValue.order]
-  );
+  const sortedElements = orderBy(elements, [sortType.value], [sortType.order]);
   const renderedVotes = sortedElements.map((element, id) => (
     <div key={id} className="row mt-2 p-2 bg-light">
       <div className="col-8">
@@ -53,7 +49,7 @@ const Page = ({ router }) => {
   const [userId, setUserId] = useState();
   const [election, setElection] = useState();
   const [votes, setVotes] = useState();
-  const [sortType, setSortType] = useState(SORT_TYPES.title);
+  const [sortType, setSortType] = useState(SORT_TYPES.TITLE);
   const [error, setError] = useState();
   const electionId = get(router, "query.election");
   const userIdOverwrite = get(router, "query.userId");
@@ -78,10 +74,6 @@ const Page = ({ router }) => {
   useEffect(() => {
     if (!election && electionId) fetchElection(electionId, userIdOverwrite);
   }, [electionId]);
-
-  useEffect(() => {
-    //TODO:
-  }, [sortType]);
 
   const addVote = (index, num) => {
     const newVotes = cloneDeep(votes);
@@ -125,7 +117,7 @@ const Page = ({ router }) => {
             <div className="px-1">Sort by</div>
             <Select
               className="flex-grow-1 px-2"
-              placeholder={SORT_TYPES.title.value}
+              placeholder={SORT_TYPES.TITLE.value}
               value={sortType}
               onChange={setSortType}
               options={Object.values(SORT_TYPES)}
