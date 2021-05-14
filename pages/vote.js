@@ -2,16 +2,21 @@ import Router, { withRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { get, zipWith, sumBy, cloneDeep, sortBy } from "lodash";
+import Select from "react-select";
 import { getElection, submitVotes } from "../src/services/qv";
 import initialiseUserId from "../src/utils/initialiseUserId";
 
 import { encryptStringWithPublicKey } from "../src/utils/encryption";
 
 const SORT_TYPES = {
-  CANDIDATE_INDEX: "index",
   CANDIDATE_TITLE: "title",
   CANDIDATE_VOTE: "vote",
 };
+
+const sortTypeDropdown = Object.values(SORT_TYPES).map((sortType) => ({
+  label: sortType,
+  value: sortType,
+}));
 
 const renderVotes = (candidates, votes, addVote, sortType) => {
   if (!candidates || !votes) return;
@@ -49,7 +54,7 @@ const Page = ({ router }) => {
   const [userId, setUserId] = useState();
   const [election, setElection] = useState();
   const [votes, setVotes] = useState();
-  const [sortType, setSortType] = useState(SORT_TYPES.CANDIDATE_INDEX);
+  const [sortType, setSortType] = useState(SORT_TYPES.CANDIDATE_TITLE);
   const [error, setError] = useState();
   const electionId = get(router, "query.election");
   const userIdOverwrite = get(router, "query.userId");
@@ -112,8 +117,21 @@ const Page = ({ router }) => {
     <>
       <div className="sticky-top navbar bg-white">
         <h2>{get(election, "config.name")}</h2>
-        <div className="bg-dark text-white p-2 m-2 rounded">
-          Budget: {get(election, "config.budget", 0) - totalVoteBudget(votes)}
+        <div className="d-flex align-items-center w-50 justify-content-end">
+          <div className="d-flex align-items-center w-50 p-2 text-uppercase px-2">
+            <div className="px-1">Sort by</div>
+            <Select
+              className="flex-grow-1 px-2"
+              defaultValue={SORT_TYPES.CANDIDATE_TITLE}
+              value={sortType}
+              onChange={setSortType}
+              options={sortTypeDropdown}
+              isSearchable={false}
+            />
+          </div>
+          <div className="bg-dark text-white p-2 rounded">
+            Budget: {get(election, "config.budget", 0) - totalVoteBudget(votes)}
+          </div>
         </div>
       </div>
       <div className="container mb-4">
