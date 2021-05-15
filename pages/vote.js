@@ -111,12 +111,12 @@ const Page = ({ router }) => {
   return (
     <>
       <div className="sticky-top navbar bg-white">
-        <h2>{get(election, "config.name")}</h2>
-        <div className="d-flex align-items-center w-50 justify-content-end">
-          <div className="d-flex align-items-center w-50 p-2 text-uppercase px-2">
-            <div className="px-1">Sort by</div>
+        <h2 className="flex-fill">{get(election, "config.name")}</h2>
+        <div className="d-flex flex-fill align-items-center">
+          <div className="d-flex flex-grow-1 align-items-center p-2 text-uppercase px-2">
+            Sort by
             <Select
-              className="flex-grow-1 px-2"
+              className="flex-grow-1 p-2"
               placeholder={SORT_TYPES.TITLE.value}
               value={sortType}
               onChange={setSortType}
