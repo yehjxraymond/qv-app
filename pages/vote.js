@@ -9,6 +9,7 @@ import initialiseUserId from "../src/utils/initialiseUserId";
 import { encryptStringWithPublicKey } from "../src/utils/encryption";
 
 const SORT_TYPES = {
+  INDEX: { label: "default", value: "index", order: "asc" },
   TITLE: { label: "title", value: "title", order: "asc" },
   VOTE: { label: "vote", value: "vote", order: "desc" },
 };
@@ -49,7 +50,7 @@ const Page = ({ router }) => {
   const [userId, setUserId] = useState();
   const [election, setElection] = useState();
   const [votes, setVotes] = useState();
-  const [sortType, setSortType] = useState(SORT_TYPES.TITLE);
+  const [sortType, setSortType] = useState(SORT_TYPES.INDEX);
   const [error, setError] = useState();
   const electionId = get(router, "query.election");
   const userIdOverwrite = get(router, "query.userId");
@@ -117,7 +118,7 @@ const Page = ({ router }) => {
             Sort by
             <Select
               className="flex-grow-1 p-2"
-              placeholder={SORT_TYPES.TITLE.value}
+              placeholder={SORT_TYPES.INDEX.value}
               value={sortType}
               onChange={setSortType}
               options={Object.values(SORT_TYPES)}
