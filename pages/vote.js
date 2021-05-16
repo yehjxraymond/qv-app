@@ -1,13 +1,20 @@
 import Router, { withRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { get, zipWith, sumBy, cloneDeep } from "lodash";
+import { get, zipWith, sumBy, cloneDeep, orderBy } from "lodash";
+import Select from "react-select";
 import { getElection, submitVotes } from "../src/services/qv";
 import initialiseUserId from "../src/utils/initialiseUserId";
 
 import { encryptStringWithPublicKey } from "../src/utils/encryption";
 
-const renderVotes = (candidates, votes, addVote, subVote) => {
+const SORT_TYPES = {
+  INDEX: { label: "default", value: "index", order: "asc" },
+  TITLE: { label: "title", value: "title", order: "asc" },
+  VOTE: { label: "vote", value: "vote", order: "desc" },
+};
+
+const renderVotes = (candidates, votes, addVote, sortType) => {
   if (!candidates || !votes) return;
   const elements = zipWith(candidates, votes, (candidate, vote) => ({
     index: vote.candidate,
@@ -15,7 +22,8 @@ const renderVotes = (candidates, votes, addVote, subVote) => {
     description: candidate.description,
     vote: vote.vote,
   }));
-  const renderedVotes = elements.map((element, id) => (
+  const sortedElements = orderBy(elements, [sortType.value], [sortType.order]);
+  const renderedVotes = sortedElements.map((element, id) => (
     <div key={id} className="row mt-2 p-2 bg-light">
       <div className="col-8">
         <h4>{element.title}</h4>
@@ -42,6 +50,7 @@ const Page = ({ router }) => {
   const [userId, setUserId] = useState();
   const [election, setElection] = useState();
   const [votes, setVotes] = useState();
+  const [sortType, setSortType] = useState(SORT_TYPES.INDEX);
   const [error, setError] = useState();
   const electionId = get(router, "query.election");
   const userIdOverwrite = get(router, "query.userId");
@@ -103,14 +112,32 @@ const Page = ({ router }) => {
   return (
     <>
       <div className="sticky-top navbar bg-white">
-        <h2>{get(election, "config.name")}</h2>
-        <div className="bg-dark text-white p-2 m-2 rounded">
-          Budget: {get(election, "config.budget", 0) - totalVoteBudget(votes)}
+        <h2 className="flex-fill">{get(election, "config.name")}</h2>
+        <div className="d-flex flex-fill align-items-center">
+          <div className="d-flex flex-grow-1 align-items-center p-2 text-uppercase px-2">
+            Sort by
+            <Select
+              className="flex-grow-1 p-2"
+              placeholder={SORT_TYPES.INDEX.value}
+              value={sortType}
+              onChange={setSortType}
+              options={Object.values(SORT_TYPES)}
+              isSearchable={false}
+            />
+          </div>
+          <div className="bg-dark text-white p-2 rounded">
+            Budget: {get(election, "config.budget", 0) - totalVoteBudget(votes)}
+          </div>
         </div>
       </div>
       <div className="container mb-4">
         <div>
-          {renderVotes(election && election.candidates, votes, addVote)}
+          {renderVotes(
+            election && election.candidates,
+            votes,
+            addVote,
+            sortType
+          )}
         </div>
 
         <button className="btn btn-dark btn-block mb-2" onClick={onSubmitVotes}>
