@@ -301,7 +301,7 @@ const Page = () => {
       }
 
       let privateKey;
-      if (encryptedVotes) {
+      if (privateElection && encryptedVotes) {
         privateKey = randomPrivateKey();
         const publicKey = publicKeyFromPrivateKey(privateKey);
         election.config.encryptionKey = publicKey;
